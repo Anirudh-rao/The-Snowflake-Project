@@ -19,46 +19,6 @@ grant USAGE, OPERATE, MODIFY on WAREHOUSE doc_ai_wh to role doc_ai_role;
 
 -- Grant Access to Database to Doc_AI_Role
 grant CREATE SCHEMA, MODIFY, USAGE on DATABASE ETL to role doc_ai_role;
-grant MODIFY, USAGE on Schema ETL.RAW to role doc_ai_role;
-grant USAGE on Schema ETL.PRE_MART to role doc_ai_role;
-grant CREATE STAGE ON SCHEMA ETL.PRE_MART to role doc_ai_role;
-grant CREATE SNOWFLAKE.ML.DOCUMENT_INTELLIGENCE on SCHEMA ETL.PRE_MART  to role doc_ai_role;
-grant create model on schema etl.pre_mart to role doc_ai_role;
-
-CREATE STAGE lyrics_pdfs 
-	DIRECTORY = ( ENABLE = true ) 
-	ENCRYPTION = ( TYPE = 'SNOWFLAKE_SSE' ) 
-	COMMENT = 'Stage for data Extractions';
-
-grant read, write on stage etl.pre_mart.lyrics_pdfs to role doc_ai_role;
-
-SELECT ETL.PRE_MART.LYRICS_EXTRACTOR!PREDICT
-(
-  GET_PRESIGNED_URL('@"ETL"."PRE_MART"."LYRICS_PDFS"', 'The Girl From Ipanema by Amy Winehouse.pdf'), 1
-);
-
-
--- DOCUMENT AI
-use role accountadmin;
-use database ETL;
-use schema ETL.pre_mart;
-
--- Create role
-create or replace role doc_ai_role;
-
-grant database role SNOWFLAKE.DOCUMENT_INTELLIGENCE_CREATOR to role doc_ai_role;
-
-select current_user;
-
-grant role doc_ai_role to user ANIRUDH;
-
--- Create warehouse
-create or replace warehouse doc_ai_wh with warehouse_size = 'x-small';
-
-grant USAGE, OPERATE, MODIFY on WAREHOUSE doc_ai_wh to role doc_ai_role;
-
--- Grant Access to Database to Doc_AI_Role
-grant CREATE SCHEMA, MODIFY, USAGE on DATABASE ETL to role doc_ai_role;
 grant CREATE TABLE,MODIFY, USAGE on Schema ETL.RAW to role doc_ai_role;
 grant USAGE on Schema ETL.PRE_MART to role doc_ai_role;
 grant CREATE STAGE ON SCHEMA ETL.PRE_MART to role doc_ai_role;
